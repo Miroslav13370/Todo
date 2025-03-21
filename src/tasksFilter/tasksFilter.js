@@ -26,29 +26,17 @@ function TasksFilter({ footerButton = () => {} }) {
   return (
     <ul className="filters">
       <li>
-        <button
-          className={select.All ? "selected" : ""}
-          type="button"
-          onClick={click}
-        >
+        <button className={select.All ? "selected" : ""} type="button" onClick={click}>
           All
         </button>
       </li>
       <li>
-        <button
-          className={select.Active ? "selected" : ""}
-          type="button"
-          onClick={click}
-        >
+        <button className={select.Active ? "selected" : ""} type="button" onClick={click}>
           Active
         </button>
       </li>
       <li>
-        <button
-          className={select.Completed ? "selected" : ""}
-          type="button"
-          onClick={click}
-        >
+        <button className={select.Completed ? "selected" : ""} type="button" onClick={click}>
           Completed
         </button>
       </li>

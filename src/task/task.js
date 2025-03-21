@@ -17,9 +17,7 @@ function Task({
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTime(
-        formatDistanceToNowStrict(created, { addSuffix: true, locale: ru }),
-      );
+      setTime(formatDistanceToNowStrict(created, { addSuffix: true, locale: ru }));
     }, 1000);
 
     return () => clearInterval(interval);
@@ -47,11 +45,7 @@ function Task({
           </span>
           <span className="created">Создано: {time}</span>
         </label>
-        <button
-          className="icon icon-edit"
-          type="button"
-          aria-label="Редактировать задачу"
-        />
+        <button className="icon icon-edit" type="button" aria-label="Редактировать задачу" />
         <button
           className="icon icon-destroy"
           onClick={() => {
@@ -61,12 +55,7 @@ function Task({
           aria-label="Удалить задачу"
         />
       </div>
-      <input
-        type="text"
-        className="edit"
-        defaultValue="Editing task"
-        id={`name+${id}`}
-      />
+      <input type="text" className="edit" defaultValue="Editing task" id={`name+${id}`} />
     </li>
   );
 }

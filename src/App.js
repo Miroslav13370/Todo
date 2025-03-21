@@ -23,8 +23,7 @@ function App() {
 
   const [tasks, setTasks] = useState(arr);
   const [filters, setFilter] = useState("all");
-  const delElem = (ide) =>
-    setTasks((tas) => [...tas].filter(({ id }) => id !== ide));
+  const delElem = (ide) => setTasks((tas) => [...tas].filter(({ id }) => id !== ide));
   const changeLine = (num) => {
     setTasks((elems) => {
       return elems.map((elem) => {
@@ -83,11 +82,7 @@ function App() {
       </header>
       <section className="main">
         <ul className="todo-list">
-          <TaskList
-            tasks={filterTasks}
-            delElem={delElem}
-            changeLine={changeLine}
-          />
+          <TaskList tasks={filterTasks} delElem={delElem} changeLine={changeLine} />
         </ul>
         <Footer footerButton={footerButton} clearAll={clearAll} />
       </section>
