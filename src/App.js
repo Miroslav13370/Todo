@@ -18,7 +18,7 @@ function App() {
       created: Date.now(),
       id: 2,
     },
-    { description: "Active task", clasWrpa: "", created: Date.now(), id: 3 },
+    { description: "Activ task", clasWrpa: "", created: Date.now(), id: 3 },
   ];
 
   const [tasks, setTasks] = useState(arr);
