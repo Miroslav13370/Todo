@@ -10,10 +10,12 @@ function Task({
   id = "",
   delElem = () => {},
   changeLine = () => {},
+  changeTask = () => {},
 }) {
   const [time, setTime] = useState(
     formatDistanceToNowStrict(created, { addSuffix: true, locale: ru }),
   );
+  const [value, setValue] = useState(description);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -22,6 +24,10 @@ function Task({
 
     return () => clearInterval(interval);
   }, [created]);
+
+  const changeValue = (e) => {
+    setValue(e.target.value);
+  };
 
   return (
     <li className={clasWrpa}>
@@ -41,11 +47,18 @@ function Task({
               }
             }}
           >
-            {description}
+            {value}
           </span>
           <span className="created">Создано: {time}</span>
         </label>
-        <button className="icon icon-edit" type="button" aria-label="Редактировать задачу" />
+        <button
+          className="icon icon-edit"
+          type="button"
+          aria-label="Редактировать задачу"
+          onClick={() => {
+            changeTask(id);
+          }}
+        />
         <button
           className="icon icon-destroy"
           onClick={() => {
@@ -55,7 +68,18 @@ function Task({
           aria-label="Удалить задачу"
         />
       </div>
-      <input type="text" className="edit" defaultValue="Editing task" id={`name+${id}`} />
+      <input
+        type="text"
+        className="edit"
+        defaultValue={description}
+        id={`name+${id}`}
+        onChange={changeValue}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            changeLine(id);
+          }
+        }}
+      />
     </li>
   );
 }
@@ -67,6 +91,7 @@ Task.propTypes = {
   id: PropTypes.number,
   delElem: PropTypes.func,
   changeLine: PropTypes.func,
+  changeTask: PropTypes.func,
 };
 
 export default Task;

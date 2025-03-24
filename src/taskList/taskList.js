@@ -2,7 +2,12 @@ import React from "react";
 import PropTypes from "prop-types";
 import Task from "../task/task";
 
-function TaskList({ tasks = [], delElem = () => {}, changeLine = () => {} }) {
+function TaskList({
+  tasks = [],
+  delElem = () => {},
+  changeLine = () => {},
+  changeTask = () => {},
+}) {
   const list = tasks.map(({ description, clasWrpa, created, id }) => {
     return (
       <Task
@@ -13,6 +18,7 @@ function TaskList({ tasks = [], delElem = () => {}, changeLine = () => {} }) {
         id={id}
         delElem={delElem}
         changeLine={changeLine}
+        changeTask={changeTask}
       />
     );
   });
@@ -31,6 +37,7 @@ TaskList.propTypes = {
   ),
   delElem: PropTypes.func,
   changeLine: PropTypes.func,
+  changeTask: PropTypes.func,
 };
 
 export default TaskList;

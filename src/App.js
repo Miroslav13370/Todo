@@ -14,7 +14,7 @@ function App() {
     },
     {
       description: "Editing task",
-      clasWrpa: "editing",
+      clasWrpa: "",
       created: Date.now(),
       id: 2,
     },
@@ -28,6 +28,9 @@ function App() {
     setTasks((elems) => {
       return elems.map((elem) => {
         if (elem.id === num) {
+          if (elem.clasWrpa === "editing") {
+            return { ...elem, clasWrpa: "" };
+          }
           if (elem.clasWrpa === "completed") {
             return { ...elem, clasWrpa: "" };
           }
@@ -73,6 +76,13 @@ function App() {
       });
     });
   };
+  const changeTask = (id) => {
+    setTasks((taski) => {
+      return taski.map((task) => {
+        return task.id === id ? { ...task, clasWrpa: "editing" } : task;
+      });
+    });
+  };
 
   return (
     <section className="todoapp">
@@ -82,7 +92,12 @@ function App() {
       </header>
       <section className="main">
         <ul className="todo-list">
-          <TaskList tasks={filterTasks} delElem={delElem} changeLine={changeLine} />
+          <TaskList
+            tasks={filterTasks}
+            delElem={delElem}
+            changeLine={changeLine}
+            changeTask={changeTask}
+          />
         </ul>
         <Footer footerButton={footerButton} clearAll={clearAll} />
       </section>
