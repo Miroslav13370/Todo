@@ -8,7 +8,7 @@ function App() {
   const arr = [
     {
       description: "Completed task",
-      clasWrpa: "",
+      clasWrpa: "Completed",
       created: Date.now(),
       id: 1,
     },
