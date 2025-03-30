@@ -1,29 +1,54 @@
-import React, { useState } from "react";
-import PropTypes from "prop-types";
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
 function NewTaskForm({ addElem = () => {} }) {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState('');
+  const [valueMin, setValueMin] = useState('');
+  const [valueSec, setvalueSec] = useState('');
   const cangeValue = (e) => {
-    const a = e.target.value;
     setValue(() => {
-      return a;
+      return e.target.value;
+    });
+  };
+
+  const cangeValueMin = (e) => {
+    setValueMin(() => {
+      return e.target.value;
+    });
+  };
+
+  const cangeValueSec = (e) => {
+    setvalueSec(() => {
+      return e.target.value;
     });
   };
 
   const submitForm = (e) => {
     e.preventDefault();
-    addElem(value);
-    setValue("");
+    addElem(value, valueMin, valueSec);
+    setValue('');
+    setValueMin('');
+    setvalueSec('');
   };
 
   return (
-    <form onSubmit={submitForm}>
+    <form onSubmit={submitForm} className="new-todo-form">
+      <input placeholder="Task" className="new-todo" onChange={cangeValue} value={value} />
       <input
-        placeholder="What needs to be done?"
-        className="new-todo"
-        onChange={cangeValue}
-        value={value}
+        className="new-todo-form__timer"
+        placeholder="Min"
+        onChange={cangeValueMin}
+        value={valueMin}
+        type="number"
       />
+      <input
+        className="new-todo-form__timer"
+        placeholder="Sec"
+        onChange={cangeValueSec}
+        value={valueSec}
+        type="number"
+      />
+      <button type="submit" style={{ display: 'none' }} aria-label="отправка" />
     </form>
   );
 }

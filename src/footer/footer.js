@@ -1,7 +1,7 @@
-import React from "react";
-import PropTypes from "prop-types";
-import TasksFilter from "../tasksFilter/tasksFilter";
-import "./footer.css";
+import React from 'react';
+import PropTypes from 'prop-types';
+import TasksFilter from '../tasksFilter/tasksFilter';
+import './footer.css';
 
 function Footer({ footerButton = () => {}, clearAll = () => {} }) {
   return (

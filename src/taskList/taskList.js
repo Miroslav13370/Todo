@@ -1,14 +1,15 @@
-import React from "react";
-import PropTypes from "prop-types";
-import Task from "../task/task";
+import React from 'react';
+import PropTypes from 'prop-types';
+import Task from '../task/task';
 
 function TaskList({
   tasks = [],
   delElem = () => {},
   changeLine = () => {},
   changeTask = () => {},
+  changePlay = () => {},
 }) {
-  const list = tasks.map(({ description, clasWrpa, created, id }) => {
+  const list = tasks.map(({ description, clasWrpa, created, id, valueMin, valueSec, play }) => {
     return (
       <Task
         description={description}
@@ -19,6 +20,9 @@ function TaskList({
         delElem={delElem}
         changeLine={changeLine}
         changeTask={changeTask}
+        milSek={(Number(valueMin) * 60 + Number(valueSec)) * 1000}
+        changePlay={changePlay}
+        play={play}
       />
     );
   });
@@ -33,7 +37,7 @@ TaskList.propTypes = {
       clasWrpa: PropTypes.string,
       created: PropTypes.number,
       id: PropTypes.number,
-    }),
+    })
   ),
   delElem: PropTypes.func,
   changeLine: PropTypes.func,
