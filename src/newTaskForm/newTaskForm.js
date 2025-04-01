@@ -1,60 +1,60 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-function NewTaskForm({ addElem = () => {} }) {
-  const [value, setValue] = useState('');
-  const [valueMin, setValueMin] = useState('');
-  const [valueSec, setvalueSec] = useState('');
-  const cangeValue = (e) => {
-    setValue(() => {
-      return e.target.value;
-    });
+function NewTaskForm({ onAddTask = () => {} }) {
+  const [taskTitle, setTaskTitle] = useState('');
+  const [minutes, setMinutes] = useState('');
+  const [seconds, setSeconds] = useState('');
+
+  const handleTitleChange = (e) => {
+    setTaskTitle(e.target.value);
   };
 
-  const cangeValueMin = (e) => {
-    setValueMin(() => {
-      return e.target.value;
-    });
+  const handleMinutesChange = (e) => {
+    setMinutes(e.target.value);
   };
 
-  const cangeValueSec = (e) => {
-    setvalueSec(() => {
-      return e.target.value;
-    });
+  const handleSecondsChange = (e) => {
+    setSeconds(e.target.value);
   };
 
-  const submitForm = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    addElem(value, valueMin, valueSec);
-    setValue('');
-    setValueMin('');
-    setvalueSec('');
+    onAddTask(taskTitle, minutes, seconds);
+    setTaskTitle('');
+    setMinutes('');
+    setSeconds('');
   };
 
   return (
-    <form onSubmit={submitForm} className="new-todo-form">
-      <input placeholder="Task" className="new-todo" onChange={cangeValue} value={value} />
+    <form onSubmit={handleSubmit} className="new-todo-form">
+      <input
+        placeholder="Task"
+        className="new-todo"
+        onChange={handleTitleChange}
+        value={taskTitle}
+      />
       <input
         className="new-todo-form__timer"
         placeholder="Min"
-        onChange={cangeValueMin}
-        value={valueMin}
+        onChange={handleMinutesChange}
+        value={minutes}
         type="number"
       />
       <input
         className="new-todo-form__timer"
         placeholder="Sec"
-        onChange={cangeValueSec}
-        value={valueSec}
+        onChange={handleSecondsChange}
+        value={seconds}
         type="number"
       />
-      <button type="submit" style={{ display: 'none' }} aria-label="отправка" />
+      <button type="submit" style={{ display: 'none' }} aria-label="Submit task" />
     </form>
   );
 }
 
 NewTaskForm.propTypes = {
-  addElem: PropTypes.func.isRequired,
+  onAddTask: PropTypes.func.isRequired,
 };
 
 export default NewTaskForm;

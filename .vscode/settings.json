@@ -4,5 +4,7 @@
   "eslint.validate": ["javascript", "javascriptreact"],
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
-  }
+  },
+  "Codegeex.GenerationPreference": "automatic",
+  "Codegeex.SidebarUI.LanguagePreference": "English"
 }

@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import TasksFilter from '../tasksFilter/tasksFilter';
 import './footer.css';
 
-function Footer({ footerButton = () => {}, clearAll = () => {} }) {
+function Footer({ onFilterChange = () => {}, onClearCompleted = () => {} }) {
   return (
     <footer className="footer">
       <span className="todo-count">1 items left</span>
-      <TasksFilter footerButton={footerButton} />
-      <button className="clear-completed" onClick={clearAll} type="button">
+      <TasksFilter onFilterChange={onFilterChange} />
+      <button className="clear-completed" onClick={onClearCompleted} type="button">
         Clear completed
       </button>
     </footer>
@@ -16,8 +16,8 @@ function Footer({ footerButton = () => {}, clearAll = () => {} }) {
 }
 
 Footer.propTypes = {
-  footerButton: PropTypes.func.isRequired,
-  clearAll: PropTypes.func.isRequired,
+  onFilterChange: PropTypes.func.isRequired,
+  onClearCompleted: PropTypes.func.isRequired,
 };
 
 export default Footer;

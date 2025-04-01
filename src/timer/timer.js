@@ -39,7 +39,6 @@ export function getCurrentTime(id) {
 }
 
 export function toPlay(id, callback) {
-  console.log(arrId[id].play);
   if (arrId[id].play) return true;
   if (arrId[id].play === false && arrId[id].stop === false) {
     arrId[id].currentTime = Date.now() + arrId[id].mls;
@@ -72,6 +71,5 @@ export function toPlay(id, callback) {
 export function toPause(id) {
   arrId[id].play = false;
   clearInterval(arrId[id].interval);
-  console.log(arrId[id].tik);
   arrId[id].stop = true;
 }

@@ -5,70 +5,73 @@ import PropTypes from 'prop-types';
 import { setTimer, getCurrentTime, toPlay, toPause } from '../timer/timer';
 
 function Task({
-  clasWrpa = '',
+  classWrapper = '',
   description = '',
   created = Date.now(),
   id = '',
-  delElem = () => {},
-  changeLine = () => {},
-  changeTask = () => {},
-  milSek = 0,
+  onDelete = () => {},
+  onToggleEditMode = () => {},
+  onEditTask = () => {},
+  durationMs = 0,
+  onTogglePlay = () => {},
 }) {
-  const [time, setTime] = useState(
+  const [createdTimeText, setCreatedTimeText] = useState(
     formatDistanceToNowStrict(created, { addSuffix: true, locale: ru })
   );
-  const [value, setValue] = useState(description);
-  const [clock, setClock] = useState(getCurrentTime(id));
 
+  const [taskTitle, setTaskTitle] = useState(description);
+  const [timerDisplay, setTimerDisplay] = useState(getCurrentTime(id));
+
+  // Обновление "создано X назад"
   useEffect(() => {
     const interval = setInterval(() => {
-      setTime(formatDistanceToNowStrict(created, { addSuffix: true, locale: ru }));
+      setCreatedTimeText(formatDistanceToNowStrict(created, { addSuffix: true, locale: ru }));
     }, 1000);
     return () => clearInterval(interval);
   }, [created]);
 
-  const changeValue = (e) => {
-    setValue(e.target.value);
-  };
-
+  // Таймер
   useEffect(() => {
-    setTimer(setClock, milSek, id);
-    const int = setInterval(() => {
-      setClock(getCurrentTime(id));
+    setTimer(setTimerDisplay, durationMs, id);
+    const interval = setInterval(() => {
+      setTimerDisplay(getCurrentTime(id));
     }, 1000);
 
-    return () => {
-      clearInterval(int);
-    };
-  }, [milSek, id]);
+    return () => clearInterval(interval);
+  }, [durationMs, id]);
+
+  const handleInputChange = (e) => {
+    setTaskTitle(e.target.value);
+  };
 
   return (
-    <li className={clasWrpa}>
+    <li className={classWrapper}>
       <div className="view">
-        <input className="toggle" type="checkbox" />
+        <input className="toggle" type="checkbox" readOnly />
+
         <label htmlFor={`name+${id}`}>
           <span
             role="button"
-            tabIndex={id}
+            tabIndex={0}
             className="title"
-            onClick={() => {
-              changeLine(id);
-            }}
+            onClick={() => onToggleEditMode(id)}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
-                changeLine(id);
+                onToggleEditMode(id);
               }
             }}
           >
-            {value}
+            {taskTitle}
           </span>
+
           <span className="description">
             <button
               className="icon icon-play"
               type="button"
               aria-label="плей"
               onClick={() => {
-                toPlay(id, setClock);
+                toPlay(id, setTimerDisplay);
+                onTogglePlay(id, true);
               }}
             />
             <button
@@ -77,38 +80,39 @@ function Task({
               aria-label="пауза"
               onClick={() => {
                 toPause(id);
+                onTogglePlay(id, false);
               }}
             />
-            {clock}
+            {timerDisplay}
           </span>
-          <span className="description">Создано: {time}</span>
+
+          <span className="description">Создано: {createdTimeText}</span>
         </label>
+
         <button
           className="icon icon-edit"
           type="button"
           aria-label="Редактировать задачу"
-          onClick={() => {
-            changeTask(id);
-          }}
+          onClick={() => onEditTask(id)}
         />
+
         <button
           className="icon icon-destroy"
-          onClick={() => {
-            delElem(id);
-          }}
           type="button"
           aria-label="Удалить задачу"
+          onClick={() => onDelete(id)}
         />
       </div>
+
       <input
         type="text"
         className="edit"
         defaultValue={description}
         id={`name+${id}`}
-        onChange={changeValue}
+        onChange={handleInputChange}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
-            changeLine(id);
+            onToggleEditMode(id);
           }
         }}
       />
@@ -117,14 +121,15 @@ function Task({
 }
 
 Task.propTypes = {
-  clasWrpa: PropTypes.string,
+  classWrapper: PropTypes.string,
   description: PropTypes.string,
   created: PropTypes.number,
   id: PropTypes.number,
-  delElem: PropTypes.func,
-  changeLine: PropTypes.func,
-  changeTask: PropTypes.func,
-  milSek: PropTypes.number,
+  onDelete: PropTypes.func,
+  onToggleEditMode: PropTypes.func,
+  onEditTask: PropTypes.func,
+  durationMs: PropTypes.number,
+  onTogglePlay: PropTypes.func,
 };
 
 export default Task;

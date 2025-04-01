@@ -5,10 +5,10 @@ import Footer from './footer/footer';
 import './app.css';
 
 function App() {
-  const arr = [
+  const initialTasks = [
     {
       description: 'Completed task',
-      clasWrpa: 'Completed',
+      classWrapper: 'completed',
       created: Date.now(),
       id: 1,
       valueMin: 43,
@@ -17,7 +17,7 @@ function App() {
     },
     {
       description: 'Editing task',
-      clasWrpa: '',
+      classWrapper: 'editing',
       created: Date.now(),
       id: 2,
       valueMin: 13,
@@ -26,7 +26,7 @@ function App() {
     },
     {
       description: 'Active task',
-      clasWrpa: '',
+      classWrapper: '',
       created: Date.now(),
       id: 3,
       valueMin: 1,
@@ -35,97 +35,84 @@ function App() {
     },
   ];
 
-  const [tasks, setTasks] = useState(arr);
-  const [filters, setFilter] = useState('all');
-  const delElem = (ide) => setTasks((tas) => [...tas].filter(({ id }) => id !== ide));
-  const changeLine = (num) => {
-    setTasks((elems) => {
-      return elems.map((elem) => {
-        if (elem.id === num) {
-          if (elem.clasWrpa === 'editing') {
-            return { ...elem, clasWrpa: '' };
-          }
-          if (elem.clasWrpa === 'completed') {
-            return { ...elem, clasWrpa: '' };
-          }
-          if (elem.clasWrpa !== 'completed' && elem.clasWrpa !== 'editing') {
-            return { ...elem, clasWrpa: 'completed' };
-          }
+  const [tasks, setTasks] = useState(initialTasks);
+  const [filter, setFilter] = useState('All');
+
+  const handleDeleteTask = (id) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
+  };
+
+  const handleToggleTaskState = (id) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) => {
+        if (task.id !== id) return task;
+
+        if (task.classWrapper === 'editing' || task.classWrapper === 'completed') {
+          return { ...task, classWrapper: '' };
         }
-        return elem;
-      });
-    });
-  };
-  const addElem = (value, Min, Sec) => {
-    setTasks((elems) => {
-      return [
-        ...elems,
-        {
-          description: value,
-          clasWrpa: '',
-          created: Date.now(),
-          id: Math.floor(Math.random() * 100000),
-          valueMin: Min,
-          valueSec: Sec,
-          play: true,
-        },
-      ];
-    });
-  };
-  const footerButton = (buttonState) => {
-    setFilter(buttonState);
+
+        return { ...task, classWrapper: 'completed' };
+      })
+    );
   };
 
-  const filterTasks = tasks.filter((task) => {
-    if (filters === 'Completed') {
-      return task.clasWrpa === 'completed';
-    }
-    if (filters === 'Active') {
-      return task.clasWrpa !== 'completed' || task.clasWrpa === 'editing';
-    }
-    return true;
+  const handleAddTask = (title, minutes, seconds) => {
+    const newTask = {
+      description: title,
+      classWrapper: '',
+      created: Date.now(),
+      id: Math.floor(Math.random() * 100000),
+      valueMin: minutes,
+      valueSec: seconds,
+      play: true,
+    };
+
+    setTasks((prevTasks) => [...prevTasks, newTask]);
+  };
+
+  const handleFilterChange = (newFilter) => {
+    setFilter(newFilter);
+  };
+
+  const handleClearCompleted = () => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.classWrapper !== 'completed'));
+  };
+
+  const handleEditTask = (id) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) => (task.id === id ? { ...task, classWrapper: 'editing' } : task))
+    );
+  };
+
+  const handleTogglePlay = (id, isPlaying) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) => (task.id === id ? { ...task, play: isPlaying } : task))
+    );
+  };
+
+  const visibleTasks = tasks.filter((task) => {
+    if (filter === 'Completed') return task.classWrapper === 'completed';
+    if (filter === 'Active') return task.classWrapper !== 'completed';
+    return true; // All
   });
-
-  const clearAll = () => {
-    setTasks((task) => {
-      return task.filter((elem) => {
-        return elem.clasWrpa !== 'completed';
-      });
-    });
-  };
-  const changeTask = (id) => {
-    setTasks((taski) => {
-      return taski.map((task) => {
-        return task.id === id ? { ...task, clasWrpa: 'editing' } : task;
-      });
-    });
-  };
-
-  const changePlay = (id, setPlay) => {
-    setTasks((taski) => {
-      return taski.map((task) => {
-        return task.id === id ? { ...task, play: setPlay } : task;
-      });
-    });
-  };
 
   return (
     <section className="todoapp">
       <header className="header">
         <h1>todos</h1>
-        <NewTaskForm addElem={addElem} />
+        <NewTaskForm onAddTask={handleAddTask} />
       </header>
       <section className="main">
         <ul className="todo-list">
           <TaskList
-            tasks={filterTasks}
-            delElem={delElem}
-            changeLine={changeLine}
-            changeTask={changeTask}
-            changePlay={changePlay}
+            tasks={visibleTasks}
+            onDelete={handleDeleteTask}
+            onToggleEditMode={handleToggleTaskState}
+            onEditTask={handleEditTask}
+            onTogglePlay={handleTogglePlay}
           />
         </ul>
-        <Footer footerButton={footerButton} clearAll={clearAll} />
+        <Footer onFilterChange={handleFilterChange} onClearCompleted={handleClearCompleted} />
       </section>
     </section>
   );
