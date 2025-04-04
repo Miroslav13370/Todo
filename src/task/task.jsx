@@ -13,7 +13,6 @@ function Task({
   onToggleEditMode = () => {},
   onEditTask = () => {},
   durationMs = 0,
-  onTogglePlay = () => {},
 }) {
   const [createdTimeText, setCreatedTimeText] = useState(
     formatDistanceToNowStrict(created, { addSuffix: true, locale: ru })
@@ -43,6 +42,29 @@ function Task({
   const handleInputChange = (e) => {
     setTaskTitle(e.target.value);
   };
+  // Кнопки функции
+
+  const handleChangeEdit = () => {
+    onToggleEditMode(id);
+  };
+  const handleChangeEditEnter = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      onToggleEditMode(id);
+    }
+  };
+  const handleChangePause = () => {
+    toPause(id);
+  };
+  const handleChangePlay = () => {
+    toPlay(id, setTimerDisplay);
+  };
+
+  const handleDelTask = () => {
+    onDelete(id);
+  };
+  const handleChangeTask = () => {
+    onEditTask(id);
+  };
 
   return (
     <li className={classWrapper}>
@@ -54,12 +76,8 @@ function Task({
             role="button"
             tabIndex={0}
             className="title"
-            onClick={() => onToggleEditMode(id)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                onToggleEditMode(id);
-              }
-            }}
+            onClick={handleChangeEdit}
+            onKeyDown={handleChangeEditEnter}
           >
             {taskTitle}
           </span>
@@ -69,19 +87,13 @@ function Task({
               className="icon icon-play"
               type="button"
               aria-label="плей"
-              onClick={() => {
-                toPlay(id, setTimerDisplay);
-                onTogglePlay(id, true);
-              }}
+              onClick={handleChangePlay}
             />
             <button
               className="icon icon-pause"
               type="button"
               aria-label="пауза"
-              onClick={() => {
-                toPause(id);
-                onTogglePlay(id, false);
-              }}
+              onClick={handleChangePause}
             />
             {timerDisplay}
           </span>
@@ -93,14 +105,14 @@ function Task({
           className="icon icon-edit"
           type="button"
           aria-label="Редактировать задачу"
-          onClick={() => onEditTask(id)}
+          onClick={handleChangeTask}
         />
 
         <button
           className="icon icon-destroy"
           type="button"
           aria-label="Удалить задачу"
-          onClick={() => onDelete(id)}
+          onClick={handleDelTask}
         />
       </div>
 
@@ -110,11 +122,7 @@ function Task({
         defaultValue={description}
         id={`name+${id}`}
         onChange={handleInputChange}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            onToggleEditMode(id);
-          }
-        }}
+        onKeyDown={handleChangeEditEnter}
       />
     </li>
   );
@@ -129,7 +137,6 @@ Task.propTypes = {
   onToggleEditMode: PropTypes.func,
   onEditTask: PropTypes.func,
   durationMs: PropTypes.number,
-  onTogglePlay: PropTypes.func,
 };
 
 export default Task;

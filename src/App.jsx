@@ -1,42 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TaskList from './taskList/taskList';
 import NewTaskForm from './newTaskForm/newTaskForm';
 import Footer from './footer/footer';
 import './app.css';
+import data from './data/data';
 
 function App() {
-  const initialTasks = [
-    {
-      description: 'Completed task',
-      classWrapper: 'completed',
-      created: Date.now(),
-      id: 1,
-      valueMin: 43,
-      valueSec: 24,
-      play: true,
-    },
-    {
-      description: 'Editing task',
-      classWrapper: 'editing',
-      created: Date.now(),
-      id: 2,
-      valueMin: 13,
-      valueSec: 24,
-      play: true,
-    },
-    {
-      description: 'Active task',
-      classWrapper: '',
-      created: Date.now(),
-      id: 3,
-      valueMin: 1,
-      valueSec: 1,
-      play: true,
-    },
-  ];
-
-  const [tasks, setTasks] = useState(initialTasks);
+  const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState('All');
+  useEffect(() => {
+    setTasks(data);
+  }, []);
 
   const handleDeleteTask = (id) => {
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
