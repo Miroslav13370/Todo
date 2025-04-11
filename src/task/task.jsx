@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { ru } from 'date-fns/locale';
 import PropTypes from 'prop-types';
 import { setTimer, getCurrentTime, toPlay, toPause } from '../timer/timer';
 
 function Task({
-  classWrapper = '',
+  modeEdit = '',
   description = '',
   created = Date.now(),
   id = '',
   onDelete = () => {},
   onToggleEditMode = () => {},
-  onEditTask = () => {},
   durationMs = 0,
+  changeTitle = () => {},
 }) {
   const [createdTimeText, setCreatedTimeText] = useState(
     formatDistanceToNowStrict(created, { addSuffix: true, locale: ru })
@@ -20,14 +20,19 @@ function Task({
 
   const [taskTitle, setTaskTitle] = useState(description);
   const [timerDisplay, setTimerDisplay] = useState(getCurrentTime(id));
+  const [editValue, setEditValue] = useState(description);
+  const [editMode, setEditMode] = useState(modeEdit);
+  const editRef = useRef();
 
   // Обновление "создано X назад"
   useEffect(() => {
     const interval = setInterval(() => {
       setCreatedTimeText(formatDistanceToNowStrict(created, { addSuffix: true, locale: ru }));
-    }, 1000);
+    }, 30000);
     return () => clearInterval(interval);
   }, [created]);
+
+  // передача состояния
 
   // Таймер
   useEffect(() => {
@@ -39,17 +44,27 @@ function Task({
     return () => clearInterval(interval);
   }, [durationMs, id]);
 
-  const handleInputChange = (e) => {
-    setTaskTitle(e.target.value);
-  };
   // Кнопки функции
 
+  const handleInputChange = (e) => {
+    setEditValue(e.target.value);
+  };
+
   const handleChangeEdit = () => {
-    onToggleEditMode(id);
+    setEditMode((mode) => {
+      return mode === '' ? 'completed' : '';
+    });
+    onToggleEditMode(id, editMode);
   };
   const handleChangeEditEnter = (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
-      onToggleEditMode(id);
+      setEditMode(editRef.current);
+      setTaskTitle(editValue);
+      changeTitle(editValue, id);
+    }
+    if (e.key === 'Escape') {
+      setEditMode(editRef.current);
+      setEditValue(taskTitle);
     }
   };
   const handleChangePause = () => {
@@ -63,13 +78,14 @@ function Task({
     onDelete(id);
   };
   const handleChangeTask = () => {
-    onEditTask(id);
+    editRef.current = editMode;
+    setEditMode('editing');
   };
 
   return (
-    <li className={classWrapper}>
+    <li className={editMode}>
       <div className="view">
-        <input className="toggle" type="checkbox" readOnly />
+        <input className="toggle" type="checkbox" readOnly id="tog" />
 
         <label htmlFor={`name+${id}`}>
           <span
@@ -119,9 +135,9 @@ function Task({
       <input
         type="text"
         className="edit"
-        defaultValue={description}
         id={`name+${id}`}
         onChange={handleInputChange}
+        value={editValue}
         onKeyDown={handleChangeEditEnter}
       />
     </li>
@@ -129,14 +145,14 @@ function Task({
 }
 
 Task.propTypes = {
-  classWrapper: PropTypes.string,
+  modeEdit: PropTypes.string,
   description: PropTypes.string,
   created: PropTypes.number,
   id: PropTypes.number,
   onDelete: PropTypes.func,
   onToggleEditMode: PropTypes.func,
-  onEditTask: PropTypes.func,
   durationMs: PropTypes.number,
+  changeTitle: PropTypes.func,
 };
 
 export default Task;

@@ -16,16 +16,13 @@ function App() {
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
   };
 
-  const handleToggleTaskState = (id) => {
+  const handleToggleTaskState = (id, mode) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) => {
-        if (task.id !== id) return task;
-
-        if (task.classWrapper === 'editing' || task.classWrapper === 'completed') {
-          return { ...task, classWrapper: '' };
+        if (task.id === id) {
+          return { ...task, modeEdit: mode === '' ? 'completed' : '' };
         }
-
-        return { ...task, classWrapper: 'completed' };
+        return task;
       })
     );
   };
@@ -33,11 +30,10 @@ function App() {
   const handleAddTask = (title, minutes, seconds) => {
     const newTask = {
       description: title,
-      classWrapper: '',
+      modeEdit: '',
       created: Date.now(),
       id: Math.floor(Math.random() * 100000),
-      valueMin: minutes,
-      valueSec: seconds,
+      valueSec: Number(seconds) + Number(minutes) * 60,
       play: true,
     };
 
@@ -49,12 +45,12 @@ function App() {
   };
 
   const handleClearCompleted = () => {
-    setTasks((prevTasks) => prevTasks.filter((task) => task.classWrapper !== 'completed'));
+    setTasks((prevTasks) => prevTasks.filter((task) => task.modeEdit !== 'completed'));
   };
 
   const handleEditTask = (id) => {
     setTasks((prevTasks) =>
-      prevTasks.map((task) => (task.id === id ? { ...task, classWrapper: 'editing' } : task))
+      prevTasks.map((task) => (task.id === id ? { ...task, modeEdit: 'editing' } : task))
     );
   };
 
@@ -65,10 +61,21 @@ function App() {
   };
 
   const visibleTasks = tasks.filter((task) => {
-    if (filter === 'Completed') return task.classWrapper === 'completed';
-    if (filter === 'Active') return task.classWrapper !== 'completed';
+    if (filter === 'Completed') return task.modeEdit === 'completed';
+    if (filter === 'Active') return task.modeEdit !== 'completed';
     return true; // All
   });
+
+  const handleChangeTitle = (des, id) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) => {
+        if (task.id === id) {
+          return { ...task, description: des };
+        }
+        return task;
+      })
+    );
+  };
 
   return (
     <section className="todoapp">
@@ -84,6 +91,7 @@ function App() {
             onToggleEditMode={handleToggleTaskState}
             onEditTask={handleEditTask}
             onTogglePlay={handleTogglePlay}
+            changeTitle={handleChangeTitle}
           />
         </ul>
         <Footer onFilterChange={handleFilterChange} onClearCompleted={handleClearCompleted} />

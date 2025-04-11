@@ -18,6 +18,9 @@ function NewTaskForm({ onAddTask = () => {} }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     const { taskTitle, Min, Sec } = dataTask;
+    if (!taskTitle || taskTitle === ' ') {
+      return;
+    }
     onAddTask(taskTitle, Min, Sec);
     setDataTask({
       taskTitle: '',

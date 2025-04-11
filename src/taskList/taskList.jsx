@@ -8,18 +8,20 @@ function TaskList({
   onToggleEditMode = () => {},
   onEditTask = () => {},
   onTogglePlay = () => {},
+  changeTitle = () => {},
 }) {
-  return tasks.map(({ description, classWrapper, created, id, valueMin, valueSec, play }) => (
+  return tasks.map(({ description, modeEdit, created, id, valueSec, play }) => (
     <Task
+      changeTitle={changeTitle}
       key={id}
       id={id}
       description={description}
-      classWrapper={classWrapper}
+      modeEdit={modeEdit}
       created={created}
       onDelete={onDelete}
       onToggleEditMode={onToggleEditMode}
       onEditTask={onEditTask}
-      durationMs={(Number(valueMin) * 60 + Number(valueSec)) * 1000}
+      durationMs={Number(valueSec) * 1000}
       onTogglePlay={onTogglePlay}
       play={play}
     />
@@ -30,7 +32,7 @@ TaskList.propTypes = {
   tasks: PropTypes.arrayOf(
     PropTypes.shape({
       description: PropTypes.string,
-      classWrapper: PropTypes.string,
+      modeEdit: PropTypes.string,
       created: PropTypes.number,
       id: PropTypes.number,
       valueMin: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
