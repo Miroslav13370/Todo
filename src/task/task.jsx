@@ -22,7 +22,8 @@ function Task({
   const [timerDisplay, setTimerDisplay] = useState(getCurrentTime(id));
   const [editValue, setEditValue] = useState(description);
   const [editMode, setEditMode] = useState(modeEdit);
-  const editRef = useRef();
+  const [isChek, setIsChek] = useState(false);
+  const editRef = useRef(null);
 
   // Обновление "создано X назад"
   useEffect(() => {
@@ -54,6 +55,7 @@ function Task({
     setEditMode((mode) => {
       return mode === '' ? 'completed' : '';
     });
+    setIsChek((chek) => !chek);
     onToggleEditMode(id, editMode);
   };
   const handleChangeEditEnter = (e) => {
@@ -85,7 +87,14 @@ function Task({
   return (
     <li className={editMode}>
       <div className="view">
-        <input className="toggle" type="checkbox" readOnly id="tog" />
+        <input
+          className="toggle"
+          type="checkbox"
+          readOnly
+          id="tog"
+          onChange={handleChangeEdit}
+          checked={isChek}
+        />
 
         <label htmlFor={`name+${id}`}>
           <span

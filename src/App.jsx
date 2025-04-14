@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import TaskList from './taskList/taskList';
 import NewTaskForm from './newTaskForm/newTaskForm';
 import Footer from './footer/footer';
@@ -6,38 +6,89 @@ import './app.css';
 import data from './data/data';
 
 function App() {
-  const [tasks, setTasks] = useState([]);
   const [filter, setFilter] = useState('All');
+
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case 'Initial':
+        return action.dat();
+      case 'Delete':
+        return state.filter((task) => task.id !== action.id);
+      case 'Toggle':
+        return state.map((task) => {
+          if (task.id === action.id) {
+            return { ...task, modeEdit: action.mode === '' ? 'completed' : '' };
+          }
+          return task;
+        });
+      case 'Add': {
+        const newTask = {
+          description: action.title,
+          modeEdit: '',
+          created: Date.now(),
+          id: Math.floor(Math.random() * 100000),
+          valueSec: Number(action.seconds) + Number(action.minutes) * 60,
+          play: true,
+        };
+
+        return [...state, newTask];
+      }
+      case 'ClearCompleted':
+        return state.filter((task) => task.modeEdit !== 'completed');
+
+      case 'Edit':
+        return state.map((task) =>
+          task.id === action.id ? { ...task, modeEdit: 'editing' } : task
+        );
+
+      case 'TogglePlay':
+        return state.map((task) =>
+          task.id === action.id ? { ...task, play: action.isPlaying } : task
+        );
+      case 'ChangeTitle':
+        return state.map((task) => {
+          if (task.id === action.id) {
+            return { ...task, description: action.des };
+          }
+          return task;
+        });
+
+      default:
+        return state;
+    }
+  };
+
+  const [stateTask, dispatch] = useReducer(reducer, []);
+
   useEffect(() => {
-    setTasks(data);
+    dispatch({
+      type: 'Initial',
+      dat: data,
+    });
   }, []);
 
   const handleDeleteTask = (id) => {
-    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
+    dispatch({
+      type: 'Delete',
+      id,
+    });
   };
 
   const handleToggleTaskState = (id, mode) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) => {
-        if (task.id === id) {
-          return { ...task, modeEdit: mode === '' ? 'completed' : '' };
-        }
-        return task;
-      })
-    );
+    dispatch({
+      type: 'Toggle',
+      id,
+      mode,
+    });
   };
 
   const handleAddTask = (title, minutes, seconds) => {
-    const newTask = {
-      description: title,
-      modeEdit: '',
-      created: Date.now(),
-      id: Math.floor(Math.random() * 100000),
-      valueSec: Number(seconds) + Number(minutes) * 60,
-      play: true,
-    };
-
-    setTasks((prevTasks) => [...prevTasks, newTask]);
+    dispatch({
+      type: 'Add',
+      title,
+      minutes,
+      seconds,
+    });
   };
 
   const handleFilterChange = (newFilter) => {
@@ -45,36 +96,38 @@ function App() {
   };
 
   const handleClearCompleted = () => {
-    setTasks((prevTasks) => prevTasks.filter((task) => task.modeEdit !== 'completed'));
+    dispatch({
+      type: 'ClearCompleted',
+    });
   };
 
   const handleEditTask = (id) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) => (task.id === id ? { ...task, modeEdit: 'editing' } : task))
-    );
+    dispatch({
+      type: 'Edit',
+      id,
+    });
   };
 
   const handleTogglePlay = (id, isPlaying) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) => (task.id === id ? { ...task, play: isPlaying } : task))
-    );
+    dispatch({
+      type: 'TogglePlay',
+      id,
+      isPlaying,
+    });
   };
 
-  const visibleTasks = tasks.filter((task) => {
+  const visibleTasks = stateTask.filter((task) => {
     if (filter === 'Completed') return task.modeEdit === 'completed';
     if (filter === 'Active') return task.modeEdit !== 'completed';
-    return true; // All
+    return true;
   });
 
   const handleChangeTitle = (des, id) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) => {
-        if (task.id === id) {
-          return { ...task, description: des };
-        }
-        return task;
-      })
-    );
+    dispatch({
+      type: 'ChangeTitle',
+      id,
+      des,
+    });
   };
 
   return (
