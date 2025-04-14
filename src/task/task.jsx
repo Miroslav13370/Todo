@@ -37,13 +37,18 @@ function Task({
 
   // Таймер
   useEffect(() => {
+    if (editMode) {
+      setIsChek(true);
+    } else {
+      setIsChek(false);
+    }
     setTimer(setTimerDisplay, durationMs, id);
     const interval = setInterval(() => {
       setTimerDisplay(getCurrentTime(id));
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [durationMs, id]);
+  }, [durationMs, id, editMode]);
 
   // Кнопки функции
 
