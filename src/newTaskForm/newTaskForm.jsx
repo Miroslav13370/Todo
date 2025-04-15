@@ -40,6 +40,7 @@ function NewTaskForm({ onAddTask = () => {} }) {
           onChange={handleTaskChange}
           value={dataTask[elem]}
           type={elem === 'taskTitle' ? 'text' : 'number'}
+          min="0"
         />
       ))}
       <button type="submit" style={{ display: 'none' }} aria-label="Submit task" />
